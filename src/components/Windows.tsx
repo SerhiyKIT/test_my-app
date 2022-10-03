@@ -26,7 +26,7 @@ export const Windows = (props:any) => {
 		setIsModalOpen(false);
 		props.modObject(personInformation);
 	};
- 
+
 	const handleCancel = () => {
 	  setIsModalOpen(false);
 	};
@@ -36,7 +36,7 @@ export const Windows = (props:any) => {
 		  <Button type="primary" onClick={showModal}>
 			 Add people
 		  </Button>
-			 <Modal title="Basic Modal" open={isModalOpen} onOk={handleOk} onCancel={handleCancel} afterClose={() => props.handleAdd()}>
+			 <Modal title="Basic Modal" open={isModalOpen} onOk={handleOk} onCancel={handleCancel}>
 				 <div style={{ marginBottom: 16 }}>
 					  <p>First name</p>
 						<input
