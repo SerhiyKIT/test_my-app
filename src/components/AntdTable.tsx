@@ -1,7 +1,9 @@
 import { Popconfirm, Table } from 'antd';
-import React, {useState, useMemo } from 'react';
+import React, {useState, useMemo, useEffect } from 'react';
 import 'antd/dist/antd.css';
 import {Windows} from './Windows'
+import { WindowsEdit } from './WindowsEdit';
+import { Button } from 'antd';
 
 interface IDataType {
 	key: React.Key;
@@ -9,7 +11,7 @@ interface IDataType {
 	secondName: string;
 	lastName: string;
 };
- 
+
 interface IPersonInformation {
 	firstName: string;
 	secondName: string;
@@ -37,6 +39,54 @@ const AntdTable: React.FC = () => {
 		const newData = dataSource.filter(item => item.key !== key);
 		setDataSource(newData);
 	};
+
+	const [handleEditObject, setHandleEditObject] = useState<IDataType>({
+		key: 0,
+		firstName: '',
+		secondName: '',
+		lastName: '',
+	});
+	
+	const handleEdit = (key: React.Key) => {
+		const newDataEdit = dataSource.filter(item => item.key === key);
+		setHandleEditObject(newDataEdit[0]);
+		console.log(newDataEdit);
+		console.log('Натиснув');
+	};
+
+	const [modalObjectEditAdd, setModalObjectEditAdd] = useState<IDataType>({
+		key: 0,
+		firstName: '',
+		secondName: '',
+		lastName: '',
+	});
+
+	const modObjectEditAdd = (data: IDataType) => {
+		setModalObjectEditAdd(data);
+	};
+
+	const [modalObjectEdit, setModalObjectEdit] = useState();
+
+	const modObjectEdit = (data: any) => {
+		setModalObjectEdit(data);
+	};
+
+	// XXXXX  XXXXX  XXXXXX
+	
+	const handleAddEdit = useMemo(() => {
+		const newDataEdit: IDataType = {
+			key: modalObjectEditAdd.key,
+			firstName: modalObjectEditAdd.firstName,
+			secondName: modalObjectEditAdd.secondName,
+			lastName: modalObjectEditAdd.lastName,
+		};
+		if (newDataEdit.firstName.length < 1) {
+			console.log('First start program, edit)')
+		}
+		else {
+			console.log(newDataEdit);
+		}
+	},[modalObjectEditAdd])
 	
 	const columns = [
 		{
@@ -61,6 +111,9 @@ const AntdTable: React.FC = () => {
 						<Popconfirm title="Sure to delete?" onConfirm={() => handleDelete(record.key)}>
 							<a>Delete</a>
 						</Popconfirm>
+						<Button onClick={() => handleEdit(record.key)}>
+							Edit
+						</Button>
 					</div>
 				) : null,
 		},
@@ -78,7 +131,7 @@ const AntdTable: React.FC = () => {
 		setModalObject(data);
 	};
 
-	console.log(modalObject);
+	console.log("ModalInput: " + modalObject);
 
 	const handleAdd = useMemo(() => {
 		const newData: IDataType = {
@@ -88,7 +141,7 @@ const AntdTable: React.FC = () => {
 			lastName: modalObject.lastName,
 		};
 		if (newData.firstName.length < 1) {
-			console.log('First start program, kostul yopt)')
+			console.log('First start program, add)')
 		}
 		else {
 			setDataSource([...dataSource, newData]);
@@ -103,7 +156,10 @@ const AntdTable: React.FC = () => {
 				dataSource={dataSource}
 				columns={columns}
 			/>
-			<Windows modObject={modObject}/>
+			<div style={{ display:'flex'}}>
+				<Windows modObject={modObject} />
+				<WindowsEdit editElement={handleEditObject} modObjectEditAdd={modObjectEditAdd} />
+			</div>
 		</div>
 	);
 };

@@ -5,11 +5,11 @@ import AntdTable from './components/AntdTable';
 const AppReact = React.createElement;
 
 function App() {
-  return (
-    <div className="App">
-		<AntdTable/>
-    </div>
-  );
+	return (
+		<div className="App">
+			<AntdTable/>
+		</div>
+	);
 };
 
 export default App;
