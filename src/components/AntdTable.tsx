@@ -46,12 +46,32 @@ const AntdTable: React.FC = () => {
 		secondName: '',
 		lastName: '',
 	});
+
+	const [modalEditOpen, setModalEditOpen] = useState<boolean>(false);
+	console.log("modalEditOpen: " + modalEditOpen);
+	const [editTrigger, setEditTrigger] = useState<boolean>(false);
+	console.log("editTrigger: " + editTrigger);
+
+	const EditTriggerOff = () => {
+		setEditTrigger(false);
+	};
+
+	const editModalTriggerOff = useMemo(() => {
+		if (modalEditOpen === true) {
+			EditTriggerOff();
+		}
+	}, [modalEditOpen])
 	
+	const editModalTriggerOpen = (data: boolean) => {
+		setModalEditOpen(data);
+	};
+
 	const handleEdit = (key: React.Key) => {
 		const newDataEdit = dataSource.filter(item => item.key === key);
 		setHandleEditObject(newDataEdit[0]);
 		console.log(newDataEdit);
 		console.log('Натиснув');
+		setEditTrigger(true);
 	};
 
 	const [modalObjectEditAdd, setModalObjectEditAdd] = useState<IDataType>({
@@ -72,9 +92,6 @@ const AntdTable: React.FC = () => {
 	};
 
 	// XXXXX  XXXXX  XXXXXX
-	function handleEditAdd (editObject:IDataType) {
-		
-	};
 	
 	const handleAddEdit = useMemo(() => {
 		const newDataEdit: IDataType = {
@@ -83,21 +100,27 @@ const AntdTable: React.FC = () => {
 			secondName: modalObjectEditAdd.secondName,
 			lastName: modalObjectEditAdd.lastName,
 		};
-
-		const editKey = () => {
-			dataSource.find(item => item.key == newDataEdit.key)
-		};
+		const editKey = dataSource.findIndex(({ key }) => key === modalObjectEditAdd.key);
 		console.log("key: " + editKey);
+
 		if (newDataEdit.firstName.length < 1) {
 			console.log('First start program, edit)')
 		}
 		
 		else {
-			console.log(newDataEdit);
-			// const newDataEditSource = dataSource.flatMap(dataSource => {
-			// 	return dataSource === dataSource[editKey] ? {newDataEdit} :  dataSource;
-			// });
-			// setDataSource(newDataEditSource)
+			const copyItems: IDataType[] = [];
+			console.log(copyItems);
+
+			for (let i = 0; i < dataSource.length; i++) {
+				if (dataSource[i] === dataSource[editKey]) {
+					copyItems.push(newDataEdit)
+				}
+
+				else {
+					copyItems.push(dataSource[i])
+				}
+			}
+			setDataSource(copyItems);
 		}
 	},[modalObjectEditAdd])
 	
@@ -171,7 +194,7 @@ const AntdTable: React.FC = () => {
 			/>
 			<div style={{ display:'flex'}}>
 				<Windows modObject={modObject} />
-				<WindowsEdit editElement={handleEditObject} modObjectEditAdd={modObjectEditAdd} />
+				<WindowsEdit editElement={handleEditObject} modObjectEditAdd={modObjectEditAdd} editTrigger={editTrigger} editModalTriggerOpen={editModalTriggerOpen} />
 			</div>
 		</div>
 	);

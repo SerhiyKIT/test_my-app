@@ -1,5 +1,5 @@
 import { Button, Modal } from 'antd';
-import React, { useState,useMemo } from 'react';
+import React, { useState,useMemo, useEffect } from 'react';
 
 interface IPersonInformationEdit {
 	key: number;
@@ -26,13 +26,13 @@ export const WindowsEdit = (props:any) => {
 		secondName: modalSecondName,
 		lastName: modalLastName,
 	};
-
+	
 	const showModal = () => {
 		setIsModalOpen(true);
 		setPersonInformationInput(props.editElement);
 	};
 	
-	 useMemo(() => {
+	const handleEdit = useMemo(() => {
 		setModalFirstName(personInformationInput.firstName);
 		setModalSecondName(personInformationInput.secondName);
 		setModalLastName(personInformationInput.lastName);
@@ -41,17 +41,34 @@ export const WindowsEdit = (props:any) => {
 	const handleOk = () => {
 		setIsModalOpen(false);
 		props.modObjectEditAdd(personInformation);
+		setEditTriggerOpen(false);
+		editTriggerOpenReturn();
 	};
 
 	const handleCancel = () => {
 		setIsModalOpen(false);
+		setEditTriggerOpen(false);
+		editTriggerOpenReturn();
 	};
+
+	const [editTriggerOpen, setEditTriggerOpen] = useState<boolean>(false)
+	
+	const editOpen = useEffect(() => {
+	if (props.editTrigger === true) {
+			showModal();
+			editTriggerOpenReturn();
+		}
+		setEditTriggerOpen(true);
+		console.log("Stan" + props.editModalTriggerOpen);
+	}, [props.editTrigger])
+	
+	const editTriggerOpenReturn = () => {
+		props.editModalTriggerOpen(editTriggerOpen);
+	};
+	//super duper
 
 	return (
 		<div>
-			<Button type="primary" onClick={showModal}>
-				Edit
-			</Button>
 			<Modal title="Basic Modal" open={isModalOpen} onOk={handleOk} onCancel={handleCancel}>
 				<div style={{ marginBottom: 16 }}>
 					<p>First name</p>
