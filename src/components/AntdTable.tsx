@@ -72,6 +72,9 @@ const AntdTable: React.FC = () => {
 	};
 
 	// XXXXX  XXXXX  XXXXXX
+	function handleEditAdd (editObject:IDataType) {
+		
+	};
 	
 	const handleAddEdit = useMemo(() => {
 		const newDataEdit: IDataType = {
@@ -80,11 +83,21 @@ const AntdTable: React.FC = () => {
 			secondName: modalObjectEditAdd.secondName,
 			lastName: modalObjectEditAdd.lastName,
 		};
+
+		const editKey = () => {
+			dataSource.find(item => item.key == newDataEdit.key)
+		};
+		console.log("key: " + editKey);
 		if (newDataEdit.firstName.length < 1) {
 			console.log('First start program, edit)')
 		}
+		
 		else {
 			console.log(newDataEdit);
+			// const newDataEditSource = dataSource.flatMap(dataSource => {
+			// 	return dataSource === dataSource[editKey] ? {newDataEdit} :  dataSource;
+			// });
+			// setDataSource(newDataEditSource)
 		}
 	},[modalObjectEditAdd])
 	

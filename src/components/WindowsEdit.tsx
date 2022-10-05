@@ -32,7 +32,7 @@ export const WindowsEdit = (props:any) => {
 		setPersonInformationInput(props.editElement);
 	};
 	
-	const modalAddEdit = useMemo(() => {
+	 useMemo(() => {
 		setModalFirstName(personInformationInput.firstName);
 		setModalSecondName(personInformationInput.secondName);
 		setModalLastName(personInformationInput.lastName);
