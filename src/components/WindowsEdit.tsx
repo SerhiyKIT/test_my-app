@@ -46,6 +46,24 @@ export const WindowsEdit = (props:any) => {
 	const handleCancel = () => {
 		setIsModalOpen(false);
 	};
+	const handleCancels = () => {
+		setIsModalOpen(false);
+	};
+	const handleCancelsd = () => {
+		setIsModalOpen(false);
+	};
+	const handleCanceldd = () => {
+		setIsModalOpen(false);
+	};
+	const handleCancelssa = () => {
+		setIsModalOpen(false);
+	};
+	const handleCancelasa = () => {
+		setIsModalOpen(false);
+	};
+
+
+	//super duper
 
 	return (
 		<div>
