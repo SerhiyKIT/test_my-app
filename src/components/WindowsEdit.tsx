@@ -1,5 +1,5 @@
-import { Button, Modal } from 'antd';
-import React, { useState,useMemo, useEffect } from 'react';
+import { Modal } from 'antd';
+import { useState, useMemo, useEffect } from 'react';
 
 interface IPersonInformationEdit {
 	key: number;
@@ -13,6 +13,7 @@ export const WindowsEdit = (props:any) => {
 	const [modalFirstName, setModalFirstName] = useState<string>('');
 	const [modalSecondName, setModalSecondName] = useState<string>('');
 	const [modalLastName, setModalLastName] = useState<string>('');
+	const [editTriggerOpen, setEditTriggerOpen] = useState<boolean>(false);
 	const [personInformationInput, setPersonInformationInput] = useState<IPersonInformationEdit>({
 		key: 0,
 		firstName: '',
@@ -51,8 +52,6 @@ export const WindowsEdit = (props:any) => {
 		editTriggerOpenReturn();
 	};
 
-	const [editTriggerOpen, setEditTriggerOpen] = useState<boolean>(false)
-	
 	const editOpen = useEffect(() => {
 	if (props.editTrigger === true) {
 			showModal();
@@ -65,7 +64,6 @@ export const WindowsEdit = (props:any) => {
 	const editTriggerOpenReturn = () => {
 		props.editModalTriggerOpen(editTriggerOpen);
 	};
-	//super duper
 
 	return (
 		<div>
@@ -95,4 +93,3 @@ export const WindowsEdit = (props:any) => {
 		</div>
 	);
 };
-  //arr.indexOf(item, from)

@@ -1,5 +1,5 @@
 import { Popconfirm, Table } from 'antd';
-import React, {useState, useMemo, useEffect } from 'react';
+import React, { useState, useMemo } from 'react';
 import 'antd/dist/antd.css';
 import {Windows} from './Windows'
 import { WindowsEdit } from './WindowsEdit';
@@ -91,8 +91,6 @@ const AntdTable: React.FC = () => {
 		setModalObjectEdit(data);
 	};
 
-	// XXXXX  XXXXX  XXXXXX
-	
 	const handleAddEdit = useMemo(() => {
 		const newDataEdit: IDataType = {
 			key: modalObjectEditAdd.key,
