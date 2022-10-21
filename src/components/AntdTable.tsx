@@ -1,5 +1,5 @@
 import { Popconfirm, Table } from 'antd';
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useMemo } from 'react';
 import 'antd/dist/antd.css';
 import { Windows } from './Windows'
 import { WindowsEdit } from './WindowsEdit';
@@ -20,7 +20,7 @@ interface IPersonInformation {
 
 interface IDataMocky {
 	pagination: number;
-	dataSource: [IPersonInformation];
+	dataSource: IPersonInformation[];
 };
 
 const AntdTable: any = () => {
@@ -53,7 +53,6 @@ const AntdTable: any = () => {
 		setDataSource(newData);
 	};
 
-	const [fetchPost, setFetchPost] = useState(false);
 	const [pageSize, setPageSize] = useState<number>(0);
 	const [dataMocky, setDataMocky] = useState<IDataMocky>(
 		{
@@ -79,7 +78,7 @@ const AntdTable: any = () => {
 	}, []);
 
 	function mockyCombain(data: IDataMocky) {
-		let dataSourceNew:any = dataSource;
+		let dataSourceNew: any = dataSource;
 		let counter = count;
 		dataMocky.dataSource.forEach((item) => {
 			let newData: IDataType = {
@@ -98,7 +97,6 @@ const AntdTable: any = () => {
 		});
 		setDataSource(dataSourceNew);
 		setCount(counter);
-		setFetchPost(true);
 	};
 
 	useMemo(() => {
@@ -169,7 +167,6 @@ const AntdTable: any = () => {
 		else {
 			const copyItems: IDataType[] = [];
 			console.log(copyItems);
-
 			for (let i = 0; i < dataSource.length; i++) {
 				if (dataSource[i] === dataSource[editKey]) {
 					copyItems.push(newDataEdit)
