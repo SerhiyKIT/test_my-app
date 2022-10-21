@@ -58,7 +58,8 @@ export const WindowsEdit = (props:any) => {
 			editTriggerOpenReturn();
 		}
 		setEditTriggerOpen(true);
-		console.log("Stan" + props.editModalTriggerOpen);
+		console.log("Stan:");
+		console.log(props.editModalTriggerOpen);
 	}, [props.editTrigger])
 	
 	const editTriggerOpenReturn = () => {
