@@ -4,7 +4,7 @@ import AntdTable from './components/AntdTable';
 
 const AppReact = React.createElement;
 
-function App() {
+export const App = () => {
 	return (
 		<div className="App">
 			<AntdTable/>
