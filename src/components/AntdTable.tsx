@@ -1,5 +1,5 @@
 import { Popconfirm, Table } from 'antd';
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import 'antd/dist/antd.css';
 import { Windows } from './Windows'
 import { WindowsEdit } from './WindowsEdit';
@@ -20,11 +20,11 @@ interface IPersonInformation {
 
 interface IDataMocky {
 	pagination: number;
-	dataSource: IPersonInformation[];
+	dataSource: IDataType[];
 };
 
 const AntdTable: any = () => {
-		
+
 	const [dataSource, setDataSource] = useState<IDataType[]>([
 		{
 			key: '0',
@@ -54,56 +54,41 @@ const AntdTable: any = () => {
 	};
 
 	const [pageSize, setPageSize] = useState<number>(0);
-	const [dataMocky, setDataMocky] = useState<IDataMocky>(
-		{
-			pagination: 0,
-			dataSource: [
-				{
-				firstName: '',
-				secondName: '',
-				lastName: '',
-				},
-			]
-		}
-	);
-
-	const url = "https://run.mocky.io/v3/197c2bbe-a184-4110-be3f-ae4a39da495e";
+	const url = "https://run.mocky.io/v3/9d43b694-be6f-44d2-a585-004e9616ef0a";
 
 	useMemo(() => {
 		fetch(url)
 			.then((response: any) => response.json())
 			.then((responseData: IDataMocky) => {
-				setDataMocky(responseData)
+				mockyCombain(responseData.dataSource);
+				setPageSize(responseData.pagination);
 			})
 	}, []);
 
-	function mockyCombain(data: IDataMocky) {
-		let dataSourceNew: any = dataSource;
-		let counter = count;
-		dataMocky.dataSource.forEach((item) => {
-			let newData: IDataType = {
-				key: counter,
-				firstName: item.firstName,
-				secondName: item.secondName,
-				lastName: item.lastName,
-			};
-			if (newData.firstName.length < 1 ||
-				newData.secondName.length < 1 ||
-				newData.lastName.length < 1) { }
-			else {
-					dataSourceNew = ([...dataSourceNew, newData]);
-					counter++;
-			}
+	function mockyCombain(data: IDataType[]) {
+		let dataSourceNew = dataSource;
+		data.forEach((item: IDataType) => {
+			dataSourceNew = ([...dataSourceNew, item]);
 		});
 		setDataSource(dataSourceNew);
-		setCount(counter);
 	};
 
-	useMemo(() => {
-		setPageSize(dataMocky.pagination);
-		mockyCombain(dataMocky);
-	}, [dataMocky]);
-
+	function fetchPost() {
+		fetch(url, {
+			method: 'PUT',
+			headers: {
+				'Content-Type': 'application/json',
+			},
+			body: JSON.stringify(dataSource),
+		})
+			.then((response) => response.json())
+			.then((data) => {
+				console.log('Success:', data);
+			})
+			.catch((error) => {
+				console.error('Error:', error);
+			});
+	};
 
 	const [handleEditObject, setHandleEditObject] = useState<IDataType>({
 		key: 0,
@@ -121,12 +106,12 @@ const AntdTable: any = () => {
 		setEditTrigger(false);
 	};
 
-	const editModalTriggerOff = useMemo(() => {
+	const editModalTriggerOff = useEffect(() => {
 		if (modalEditOpen === true) {
 			EditTriggerOff();
 		}
 	}, [modalEditOpen])
-	
+
 	const editModalTriggerOpen = (data: boolean) => {
 		setModalEditOpen(data);
 	};
@@ -159,11 +144,9 @@ const AntdTable: any = () => {
 		};
 		const editKey = dataSource.findIndex(({ key }) => key === modalObjectEditAdd.key);
 		console.log("key: " + editKey);
-
 		if (newDataEdit.firstName.length < 1) {
 			console.log('First start program, edit)')
 		}
-		
 		else {
 			const copyItems: IDataType[] = [];
 			console.log(copyItems);
@@ -178,7 +161,7 @@ const AntdTable: any = () => {
 			setDataSource(copyItems);
 		}
 	}, [modalObjectEditAdd]);
-	
+
 	const columns = [
 		{
 			title: 'Fist name',
@@ -201,7 +184,7 @@ const AntdTable: any = () => {
 					<div className='operation'>
 						<Button>
 							<Popconfirm title="Sure to delete?" onConfirm={() => handleDelete(record.key)}>
-							<a>Delete</a>
+								<a>Delete</a>
 							</Popconfirm>
 						</Button>
 						<Button onClick={() => handleEdit(record.key)}>
@@ -234,44 +217,45 @@ const AntdTable: any = () => {
 		if (newData.firstName.length < 1 ||
 			newData.secondName.length < 1 ||
 			newData.lastName.length < 1) {
-			
+
 		}
 		else {
 			setDataSource([...dataSource, newData]);
 			setCount(count + 1);
 		}
 	}, [modalObject])
-	
+
 	function mainAppTable() {
 		if (pageSize === 0) {
 			return null
 		}
 		else {
-		return (
-			<div>
-				<Table
-					rowClassName={() => 'editable-row'}
-					dataSource={dataSource}
-					columns={columns}
-					pagination={
-						{
-							pageSize: pageSize
+			return (
+				<div>
+					<Table
+						rowClassName={() => 'editable-row'}
+						dataSource={dataSource}
+						columns={columns}
+						pagination={
+							{
+								pageSize: pageSize
+							}
 						}
-					}
-				/>
-				<div style={{ display: 'flex' }}>
-					<Windows modObject={modObject} />
-					<WindowsEdit editElement={handleEditObject} modObjectEditAdd={modObjectEditAdd} editTrigger={editTrigger} editModalTriggerOpen={editModalTriggerOpen} />
+					/>
+					<div style={{ display: 'flex' }}>
+						<Windows modObject={modObject} />
+						<WindowsEdit editElement={handleEditObject} modObjectEditAdd={modObjectEditAdd} editTrigger={editTrigger} editModalTriggerOpen={editModalTriggerOpen} />
+						<Button onClick={(e) => (fetchPost())}>To send</Button>
+					</div>
+					<div></div>
 				</div>
-			<div></div>
-			</div>
 			);
 		}
 	};
-	
+
 	return (
 		mainAppTable()
 	);
-	
+
 };
-	export default AntdTable;
+export default AntdTable;
