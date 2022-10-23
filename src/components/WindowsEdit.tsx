@@ -8,7 +8,7 @@ interface IPersonInformationEdit {
 	lastName: string;
 };
 
-export const WindowsEdit = (props:any) => {
+export const WindowsEdit = (props: any) => {
 	const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
 	const [modalFirstName, setModalFirstName] = useState<string>('');
 	const [modalSecondName, setModalSecondName] = useState<string>('');
@@ -27,17 +27,17 @@ export const WindowsEdit = (props:any) => {
 		secondName: modalSecondName,
 		lastName: modalLastName,
 	};
-	
+
 	const showModal = () => {
 		setIsModalOpen(true);
 		setPersonInformationInput(props.editElement);
 	};
-	
-	const handleEdit = useMemo(() => {
+
+	const handleEdit = useEffect(() => {
 		setModalFirstName(personInformationInput.firstName);
 		setModalSecondName(personInformationInput.secondName);
 		setModalLastName(personInformationInput.lastName);
-	},[personInformationInput])
+	}, [personInformationInput])
 
 	const handleOk = () => {
 		setIsModalOpen(false);
@@ -53,7 +53,7 @@ export const WindowsEdit = (props:any) => {
 	};
 
 	const editOpen = useEffect(() => {
-	if (props.editTrigger === true) {
+		if (props.editTrigger === true) {
 			showModal();
 			editTriggerOpenReturn();
 		}
@@ -61,7 +61,7 @@ export const WindowsEdit = (props:any) => {
 		console.log("Stan:");
 		console.log(props.editModalTriggerOpen);
 	}, [props.editTrigger])
-	
+
 	const editTriggerOpenReturn = () => {
 		props.editModalTriggerOpen(editTriggerOpen);
 	};
@@ -73,21 +73,21 @@ export const WindowsEdit = (props:any) => {
 					<p>First name</p>
 					<input
 						onChange={e => setModalFirstName(e.target.value)}
-						value = {modalFirstName}
+						value={modalFirstName}
 					/>
 				</div>
 				<div style={{ marginBottom: 16 }}>
 					<p>Second name</p>
 					<input
 						onChange={e => setModalSecondName(e.target.value)}
-						value = {modalSecondName}
+						value={modalSecondName}
 					/>
 				</div>
 				<div style={{ marginBottom: 16 }}>
 					<p>Last name</p>
 					<input
 						onChange={e => setModalLastName(e.target.value)}
-						value = {modalLastName}
+						value={modalLastName}
 					/>
 				</div>
 			</Modal>
