@@ -1,11 +1,14 @@
 import { Modal } from 'antd';
 import { useState, useMemo, useEffect } from 'react';
 
-interface IPersonInformationEdit {
-	key: number;
+interface IPersonInformation {
 	firstName: string;
 	secondName: string;
 	lastName: string;
+};
+
+interface IDataType extends IPersonInformation {
+	key: React.Key;
 };
 
 export const WindowsEdit = (props: any) => {
@@ -14,14 +17,14 @@ export const WindowsEdit = (props: any) => {
 	const [modalSecondName, setModalSecondName] = useState<string>('');
 	const [modalLastName, setModalLastName] = useState<string>('');
 	const [editTriggerOpen, setEditTriggerOpen] = useState<boolean>(false);
-	const [personInformationInput, setPersonInformationInput] = useState<IPersonInformationEdit>({
+	const [personInformationInput, setPersonInformationInput] = useState<IDataType>({
 		key: 0,
 		firstName: '',
 		secondName: '',
 		lastName: '',
 	});
 
-	const personInformation: IPersonInformationEdit = {
+	const personInformation: IDataType = {
 		key: personInformationInput.key,
 		firstName: modalFirstName,
 		secondName: modalSecondName,

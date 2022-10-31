@@ -1,62 +1,114 @@
 import { Button, Modal } from 'antd';
-import React, { useState } from 'react';
+import { useState, useMemo, forwardRef, useImperativeHandle, useCallback, PropsWithoutRef, Ref } from 'react';
+import { IDataType } from '../constant/interface';
+import { ModalDirection, ModalType } from '../constant/enum';
+import { v4 as uuid } from 'uuid';
+import { useSelector, useDispatch } from 'react-redux';
+import { ADD_STATE, EDIT_STATE } from '../redux/features/dataSlice';
+import { AnyAction } from '@reduxjs/toolkit';
+import { switchModal } from '../redux/features/modalSlice';
 
-interface IPersonInformation {
-	firstName: string;
-	secondName: string;
-	lastName: string;
-};
-
-export const Windows = (props:any) => {
-	const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+function Windows(props: PropsWithoutRef<any>, ref: Ref<any>) {
+	const [modal, setModal] = useState<ModalDirection>(ModalDirection.DEFAULT);
 	const [modalFirstName, setModalFirstName] = useState<string>('');
 	const [modalSecondName, setModalSecondName] = useState<string>('');
 	const [modalLastName, setModalLastName] = useState<string>('');
+	const isModalOpen: boolean = useSelector((store: AnyAction) => store.modal);
+	const dispatch = useDispatch();
 
-	const personInformation:IPersonInformation = {
+	const personInformationAdd: IDataType = {
+		key: (modal === ModalDirection.ADD ? uuid() : props.editObject.key),
 		firstName: modalFirstName,
 		secondName: modalSecondName,
 		lastName: modalLastName,
 	};
+	console.log(modal);
 
 	const showModal = () => {
-		setIsModalOpen(true);
+		dispatch(switchModal(ModalType.OPEN_MODAL));
 	};
 
 	const handleOk = () => {
-		setIsModalOpen(false);
-		props.modObject(personInformation);
+		showFunctions(modal, personInformationAdd)
+		dispatch(switchModal(ModalType.CLOSED_MODAL));
+		nullValue();
+		setModal(ModalDirection.DEFAULT);
 	};
 
 	const handleCancel = () => {
-		setIsModalOpen(false);
+		dispatch(switchModal(ModalType.CLOSED_MODAL));
+		nullValue();
+		setModal(ModalDirection.DEFAULT);
+	};
+
+	const onSubmit = useCallback(() => {
+		showModal();
+		local();
+		setModal(ModalDirection.EDIT);
+	}, []);
+
+	useImperativeHandle(ref, () => ({
+		onSubmit: () => {
+			onSubmit();
+		},
+	}), [onSubmit]);
+
+	const addModal = () => {
+		setModal(ModalDirection.ADD);
+		showModal();
+	};
+
+	function local() {
+		if (modal === ModalDirection.EDIT) {
+			setModalFirstName(props.editObject.firstName);
+			setModalSecondName(props.editObject.secondName);
+			setModalLastName(props.editObject.lastName);
+		}
+	};
+
+	useMemo(() => {
+		local();
+	}, [isModalOpen]);
+
+	function nullValue() {
+		setModalFirstName('');
+		setModalSecondName('');
+		setModalLastName('');
+	};
+
+	function showFunctions(modal: ModalDirection, personInformationAdd: IDataType) {
+		switch (modal) {
+			case ModalDirection.ADD:
+				return dispatch(ADD_STATE(personInformationAdd));
+			case ModalDirection.EDIT:
+				return dispatch(EDIT_STATE(personInformationAdd));
+		}
+	};
+
+	function inputTemplate(inputNameP: string, InputSetName: React.Dispatch<React.SetStateAction<string>>, valueInputName: string) {
+		return (
+			<div style={{ marginBottom: 16 }}>
+				<p>{inputNameP}</p>
+				<input
+					onChange={(e) => InputSetName(e.target.value)}
+					value={valueInputName}
+				/>
+			</div>
+		)
 	};
 
 	return (
 		<div>
-			<Button type="primary" onClick={showModal}>
+			<Button type="primary" onClick={addModal}>
 				Add people
 			</Button>
-				<Modal title="Basic Modal" open={isModalOpen} onOk={handleOk} onCancel={handleCancel}>
-					<div style={{ marginBottom: 16 }}>
-						<p>First name</p>
-						<input
-							onChange={e => setModalFirstName(e.target.value)}
-						/>
-					</div>
-					<div style={{ marginBottom: 16 }}>
-						<p>Second name</p>
-						<input
-							onChange={e => setModalSecondName(e.target.value)}
-						/>
-					</div>
-					<div style={{ marginBottom: 16 }}>
-						<p>Last name</p>
-						<input
-							onChange={e => setModalLastName(e.target.value)}
-						/>
-					</div>
-				</Modal>
+			<Modal title="Basic Modal" open={isModalOpen} onOk={handleOk} onCancel={handleCancel}>
+				{inputTemplate('First name', setModalFirstName, modalFirstName)}
+				{inputTemplate('Second name', setModalSecondName, modalSecondName)}
+				{inputTemplate('Last name', setModalLastName, modalLastName)}
+			</Modal>
 		</div>
 	);
 };
+
+export default forwardRef(Windows);
