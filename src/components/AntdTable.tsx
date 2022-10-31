@@ -1,166 +1,53 @@
-import { Popconfirm, Table } from 'antd';
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useMemo, useRef } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { AnyAction } from '@reduxjs/toolkit';
 import 'antd/dist/antd.css';
-import { Windows } from './Windows'
-import { WindowsEdit } from './WindowsEdit';
-import { Button } from 'antd';
+import { Popconfirm, Table, Button } from 'antd';
+import Windows from './Windows'
+import { IDataType, IDataMocky } from '../constant/interface';
+import { DELETE_STATE, ADD_MAS_STATE } from '../redux/features/dataSlice';
 
-interface IDataType {
-	key: React.Key;
-	firstName: string;
-	secondName: string;
-	lastName: string;
-};
-
-interface IPersonInformation {
-	firstName: string;
-	secondName: string;
-	lastName: string;
-};
-
-interface IDataMocky {
-	pagination: number;
-	dataSource: IDataType[];
-};
-
-const AntdTable: any = () => {
-
-	const [dataSource, setDataSource] = useState<IDataType[]>([
-		{
-			key: '0',
-			firstName: 'Edward',
-			secondName: 'King',
-			lastName: 'Source',
-		},
-		{
-			key: '1',
-			firstName: 'Ray',
-			secondName: ' King',
-			lastName: 'Source',
-		},
-		{
-			key: '2',
-			firstName: 'Nitoshi',
-			secondName: ' King',
-			lastName: 'Source',
-		}
-	]);
-
-	const [count, setCount] = useState(10);
-
-	const handleDelete = (key: React.Key) => {
-		const newData = dataSource.filter(item => item.key !== key);
-		setDataSource(newData);
-	};
-
+const AntdTable = () => {
+	const dataSource: IDataType[] = useSelector((store: AnyAction) => store.data);
+	const dispatch = useDispatch();
 	const [pageSize, setPageSize] = useState<number>(0);
+	const [error, setError] = useState(null);
+	const [isLoaded, setIsLoaded] = useState(false);
 	const url = "https://run.mocky.io/v3/9d43b694-be6f-44d2-a585-004e9616ef0a";
+	const childComp = useRef<any>(null);
 
-	useMemo(() => {
-		fetch(url)
+	const getApiData = async () => {
+		const response = await fetch(url)
 			.then((response: any) => response.json())
 			.then((responseData: IDataMocky) => {
-				mockyCombain(responseData.dataSource);
+				setIsLoaded(true);
+				dispatch(ADD_MAS_STATE(responseData.dataSource));
 				setPageSize(responseData.pagination);
 			})
-	}, []);
-
-	function mockyCombain(data: IDataType[]) {
-		let dataSourceNew = dataSource;
-		data.forEach((item: IDataType) => {
-			dataSourceNew = ([...dataSourceNew, item]);
-		});
-		setDataSource(dataSourceNew);
-	};
-
-	function fetchPost() {
-		fetch(url, {
-			method: 'PUT',
-			headers: {
-				'Content-Type': 'application/json',
-			},
-			body: JSON.stringify(dataSource),
-		})
-			.then((response) => response.json())
-			.then((data) => {
-				console.log('Success:', data);
-			})
 			.catch((error) => {
-				console.error('Error:', error);
+				setIsLoaded(true);
+				setError(error);
 			});
 	};
 
-	const [handleEditObject, setHandleEditObject] = useState<IDataType>({
-		key: 0,
-		firstName: '',
-		secondName: '',
-		lastName: '',
-	});
+	useMemo(() => {
+		getApiData();
+	}, []);
 
-	const [modalEditOpen, setModalEditOpen] = useState<boolean>(false);
-	console.log("modalEditOpen: " + modalEditOpen);
-	const [editTrigger, setEditTrigger] = useState<boolean>(false);
-	console.log("editTrigger: " + editTrigger);
-
-	const EditTriggerOff = () => {
-		setEditTrigger(false);
-	};
-
-	const editModalTriggerOff = useEffect(() => {
-		if (modalEditOpen === true) {
-			EditTriggerOff();
+	const [editObject, setEitObject] = useState<IDataType>(
+		{
+			key: 0,
+			firstName: 'q',
+			secondName: 'q',
+			lastName: 'q',
 		}
-	}, [modalEditOpen])
-
-	const editModalTriggerOpen = (data: boolean) => {
-		setModalEditOpen(data);
-	};
-
+	);
+	console.log(editObject);
 	const handleEdit = (key: React.Key) => {
 		const newDataEdit = dataSource.filter(item => item.key === key);
-		setHandleEditObject(newDataEdit[0]);
-		console.log(newDataEdit);
-		console.log('Натиснув');
-		setEditTrigger(true);
+		setEitObject(newDataEdit[0]);
+		childComp.current?.onSubmit(editObject);
 	};
-
-	const [modalObjectEditAdd, setModalObjectEditAdd] = useState<IDataType>({
-		key: 0,
-		firstName: '',
-		secondName: '',
-		lastName: '',
-	});
-
-	const modObjectEditAdd = (data: IDataType) => {
-		setModalObjectEditAdd(data);
-	};
-
-	const handleAddEdit = useMemo(() => {
-		const newDataEdit: IDataType = {
-			key: modalObjectEditAdd.key,
-			firstName: modalObjectEditAdd.firstName,
-			secondName: modalObjectEditAdd.secondName,
-			lastName: modalObjectEditAdd.lastName,
-		};
-		const editKey = dataSource.findIndex(({ key }) => key === modalObjectEditAdd.key);
-		console.log("key: " + editKey);
-		if (newDataEdit.firstName.length < 1) {
-			console.log('First start program, edit)')
-		}
-		else {
-			const copyItems: IDataType[] = [];
-			console.log(copyItems);
-			for (let i = 0; i < dataSource.length; i++) {
-				if (dataSource[i] === dataSource[editKey]) {
-					copyItems.push(newDataEdit)
-				}
-				else {
-					copyItems.push(dataSource[i])
-				}
-			}
-			setDataSource(copyItems);
-		}
-	}, [modalObjectEditAdd]);
 
 	const columns = [
 		{
@@ -183,7 +70,7 @@ const AntdTable: any = () => {
 				dataSource.length >= 1 ? (
 					<div className='operation'>
 						<Button>
-							<Popconfirm title="Sure to delete?" onConfirm={() => handleDelete(record.key)}>
+							<Popconfirm title="Sure to delete?" onConfirm={() => dispatch(DELETE_STATE(record.key))}>
 								<a>Delete</a>
 							</Popconfirm>
 						</Button>
@@ -195,67 +82,50 @@ const AntdTable: any = () => {
 		},
 	];
 
-	const [modalObject, setModalObject] = useState<IPersonInformation>({
-		firstName: "",
-		secondName: "",
-		lastName: "",
-	});
-
-	const modObject = (data: IPersonInformation) => {
-		setModalObject(data);
+	function fetchPost() {
+		fetch(url, {
+			method: 'PUT',
+			headers: {
+				'Content-Type': 'application/json',
+			},
+			body: JSON.stringify(dataSource),
+		})
+			.then((response) => response.json())
+			.then((data) => {
+				console.log('Success:', data);
+			})
+			.catch((error) => {
+				console.error('Error:', error);
+			});
 	};
 
-	console.log("ModalInput: " + modalObject);
-
-	const handleAdd = useMemo(() => {
-		const newData: IDataType = {
-			key: count,
-			firstName: modalObject.firstName,
-			secondName: modalObject.secondName,
-			lastName: modalObject.lastName,
-		};
-		if (newData.firstName.length < 1 ||
-			newData.secondName.length < 1 ||
-			newData.lastName.length < 1) {
-
-		}
-		else {
-			setDataSource([...dataSource, newData]);
-			setCount(count + 1);
-		}
-	}, [modalObject])
-
-	function mainAppTable() {
-		if (pageSize === 0) {
-			return null
-		}
-		else {
-			return (
-				<div>
-					<Table
-						rowClassName={() => 'editable-row'}
-						dataSource={dataSource}
-						columns={columns}
-						pagination={
-							{
-								pageSize: pageSize
-							}
+	if (error) {
+		return <div>Error: {error}</div>;
+	} else if (!isLoaded) {
+		return <div>Loading...</div>;
+	} else {
+		return (
+			<div>
+				<Table
+					rowClassName={() => 'editable-row'}
+					dataSource={dataSource}
+					columns={columns}
+					pagination={
+						{
+							pageSize: pageSize
 						}
+					}
+				/>
+				<div style={{ display: 'flex' }}>
+					<Windows
+						editObject={editObject}
+						ref={childComp}
 					/>
-					<div style={{ display: 'flex' }}>
-						<Windows modObject={modObject} />
-						<WindowsEdit editElement={handleEditObject} modObjectEditAdd={modObjectEditAdd} editTrigger={editTrigger} editModalTriggerOpen={editModalTriggerOpen} />
-						<Button onClick={(e) => (fetchPost())}>To send</Button>
-					</div>
-					<div></div>
+					<Button onClick={(e) => (fetchPost())}>To send</Button>
 				</div>
-			);
-		}
-	};
-
-	return (
-		mainAppTable()
-	);
-
+			</div>
+		);
+	}
 };
+
 export default AntdTable;
