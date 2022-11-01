@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useRef } from 'react';
+import React, { useState, useMemo, useRef, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { AnyAction } from '@reduxjs/toolkit';
 import 'antd/dist/antd.css';
@@ -15,24 +15,25 @@ const AntdTable = () => {
 	const [isLoaded, setIsLoaded] = useState(false);
 	const url = "https://run.mocky.io/v3/9d43b694-be6f-44d2-a585-004e9616ef0a";
 	const childComp = useRef<any>(null);
+	const [fetchSource, setFetchSource] = useState<IDataType[]>([]);
 
-	const getApiData = async () => {
-		const response = await fetch(url)
+	useMemo(() => {
+		fetch(url)
 			.then((response: any) => response.json())
 			.then((responseData: IDataMocky) => {
 				setIsLoaded(true);
-				dispatch(ADD_MAS_STATE(responseData.dataSource));
 				setPageSize(responseData.pagination);
+				setFetchSource(responseData.dataSource);
 			})
 			.catch((error) => {
 				setIsLoaded(true);
 				setError(error);
 			});
-	};
-
-	useMemo(() => {
-		getApiData();
 	}, []);
+
+	useEffect(() => {
+		dispatch(ADD_MAS_STATE(fetchSource));
+	}, [fetchSource]);
 
 	const [editObject, setEitObject] = useState<IDataType>(
 		{
