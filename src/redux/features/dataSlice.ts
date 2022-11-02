@@ -42,7 +42,7 @@ export const dataSlice = createSlice({
 			return editState
 		},
 		DELETE_STATE: ( state, action ) => {
-			const deleteState = state.filter(item => item.key !== action.type);
+			const deleteState = state.filter(item => item.key !== action.payload);
 			return deleteState
 		}
 	}
