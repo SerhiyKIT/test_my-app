@@ -4,9 +4,18 @@ export interface IPersonInformation {
 	lastName: string;
 };
 
-export interface IDataType extends IPersonInformation {
+export interface IDataType extends IPersonInformation, IDataCar {
 	key: React.Key;
 };
+
+export interface IDataCar {
+	cars?: IBrand[];
+};
+
+export interface IBrand {
+	brand?: string;
+};
+
 
 export interface IDataMocky {
 	pagination: number;
