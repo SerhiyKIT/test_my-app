@@ -7,18 +7,33 @@ export const initialState: IDataType[] = [
 		firstName: 'Edward',
 		secondName: 'King',
 		lastName: 'Source',
+		cars:[
+			{brand: 'ford'},
+			{brand: 'mitsubishi'},
+			{brand: 'BMW'},
+		],
 	},
 	{
 		key: '1',
 		firstName: 'Ray',
 		secondName: 'King',
 		lastName: 'Source',
+		cars:[
+			{brand: 'ford'},
+			{brand: 'mitsubishi'},
+			{brand: 'BMW'},
+		],
 	},
 	{
 		key: '2',
 		firstName: 'Nitoshi',
 		secondName: 'King',
 		lastName: 'Source',
+		cars:[
+			{brand: 'ford'},
+			{brand: 'mitsubishi'},
+			{brand: 'BMW'},
+		],
 	}
 ];
 
@@ -26,27 +41,27 @@ export const dataSlice = createSlice({
 	name: "data",
 	initialState,
 	reducers: {
-		ADD_STATE: (state, action ) => {
+		addState: (state, action ) => {
 			const newState = [...state, action.payload];
 			return newState
 		},
-		ADD_MAS_STATE: (state, action) => {
+		addMasState: (state, action) => {
 			const newState = [...state, ...action.payload];
 			return newState
 		},
-		EDIT_STATE: ( state, action ) => {
+		editState: ( state, action ) => {
 			const editState: IDataType[] = [];
 			state.forEach((item: IDataType) => {
 				editState.push(item.key === action.payload.key ? action.payload : item);
 			});
 			return editState
 		},
-		DELETE_STATE: ( state, action ) => {
-			const deleteState = state.filter(item => item.key !== action.type);
+		deleteState: ( state, action ) => {
+			const deleteState = state.filter(item => item.key !== action.payload);
 			return deleteState
 		}
 	}
 });
 
-export const { ADD_STATE, EDIT_STATE, DELETE_STATE, ADD_MAS_STATE} = dataSlice.actions;
+export const { addState,addMasState, editState, deleteState } = dataSlice.actions;
 export default dataSlice.reducer;

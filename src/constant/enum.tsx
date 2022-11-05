@@ -14,3 +14,9 @@ export enum ModalType {
 	OPEN_MODAL,
 	CLOSED_MODAL
 }
+
+export enum Cars {
+	ADD,
+	EDIT,
+	DELETE
+}
