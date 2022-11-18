@@ -56,12 +56,8 @@ export const dataSlice = createSlice({
 			});
 			return editState
 		},
-		deleteState: ( state, action ) => {
-			const deleteState = state.filter(item => item.key !== action.payload);
-			return deleteState
-		}
 	}
 });
 
-export const { addState,addMasState, editState, deleteState } = dataSlice.actions;
+export const { addState,addMasState, editState } = dataSlice.actions;
 export default dataSlice.reducer;

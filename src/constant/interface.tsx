@@ -1,3 +1,5 @@
+import { Cars } from "./enum";
+
 export interface IPersonInformation {
 	firstName: string;
 	secondName: string;
@@ -16,7 +18,6 @@ export interface IBrand {
 	brand?: string;
 };
 
-
 export interface IDataMocky {
 	pagination: number;
 	dataSource: IDataType[];
@@ -24,4 +25,18 @@ export interface IDataMocky {
 
 export interface IModalSwitch {
 	modalSwitch: boolean;
-}
+};
+
+export interface IOnClick {
+	type: Cars;
+	value: string;
+	index: number;
+	editObj: IBrand;
+};
+
+export interface IDataSearch {
+	key: React.Key;
+	q: string;
+	days: number;
+	hour: number;
+};
