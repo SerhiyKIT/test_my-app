@@ -33,10 +33,3 @@ export interface IOnClick {
 	index: number;
 	editObj: IBrand;
 };
-
-export interface IDataSearch {
-	key: React.Key;
-	q: string;
-	days: number;
-	hour: number;
-};
